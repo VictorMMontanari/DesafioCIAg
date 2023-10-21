@@ -1,17 +1,30 @@
 <script setup>
-import { ref, onMounted, computed, watch } from 'vue';
-const selectedOption = ref('ALL...');
+import { ref, computed, onMounted, watch, reactive } from 'vue';
+import ListProd from '../components/ListProd.vue'
 
-const produtos = ref([]);
+const selectedOption = ref('ALL...');
+const produtos = reactive([]);
 const searchTerm = ref('');
 
 onMounted(async () => {
   try {
-    const response = await axios.get('https://fakestoreapi.com/products');
-    produtos.value = response.data.$values;
+    fetch('https://fakestoreapi.com/products')
+      .then(res => res.json())
+      .then(res => {
+        produtos.value = res;
+        console.log(res);
+      });
   } catch (error) {
     console.error('Erro na solicitação:', error);
   }
+});
+
+const filteredProdutos = computed(() => {
+  if (!searchTerm.value) {
+    return produtos.value;
+  }
+  const searchTermLower = searchTerm.value.toLowerCase();
+  return produtos.value.filter(produto => produto.title.toLowerCase().includes(searchTermLower));
 });
 
 </script>
@@ -23,7 +36,7 @@ onMounted(async () => {
         <form class="row row-cols-lg-auto g-3 align-items-center">
           <div class="col-12">
             <input id="inline-form-input-name" class="form-control mb-2 mb-sm-0 mr-sm-2" placeholder="Nome do Produto"
-              v-model="search" />
+              v-model="searchTerm" />
           </div>
           <div class="col-12">
             <label class="visually-hidden" for="inlineFormSelectPref">Preference</label>
@@ -39,7 +52,16 @@ onMounted(async () => {
         <div class="col">
           <div class=" text-center conteudo2">
             <div class="card-body row g-3">
-              
+              <ListProd v-for="produto in filteredProdutos"
+                :key="produto.id"
+                :id="produto.id"
+                :title="produto.title"
+                :preco="produto.price"
+                :descricao="produto.description"
+                :categoria="produto.category"
+                :img="produto.image"
+                :avalicao="produto.rating.rate"
+                :qtd="produto.rating.count"/>
             </div>
           </div>
         </div>
