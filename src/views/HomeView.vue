@@ -4,9 +4,15 @@ import ListProd from '../components/ListProd.vue';
 import CarregarProd from '../components/CarregarProd.vue';
 
 const selectedOption = ref('ALL...');
+const selectedOptionC = ref('Categorias:');
 const produtos = reactive([]);
 const searchTerm = ref('');
 const produtosLoaded = ref(false); 
+
+const resetCategorySelector = () => {
+  selectedOptionC.value = 'Categorias:';
+  searchTerm.value = ''; // Limpar o campo de pesquisa
+}
 
 onMounted(async () => {
   try {
@@ -22,19 +28,24 @@ onMounted(async () => {
 });
 
 const filteredProdutos = computed(() => {
-  const sortedProdutos = [...produtos.value];
+  let sortedProdutos = [...produtos.value];
 
   if (!searchTerm.value) {
     if (selectedOption.value.toLowerCase() === "maior") {
       sortedProdutos.sort((a, b) => b.price - a.price);
-    }
-    else if (selectedOption.value.toLowerCase() === "menor") {
+    } else if (selectedOption.value.toLowerCase() === "menor") {
       sortedProdutos.sort((a, b) => a.price - b.price);
     }
   }
+
+  if (!searchTerm.value && selectedOption.value.toLowerCase() != "ALL..." && selectedOptionC.value.toLocaleLowerCase() != "categorias:") {
+    sortedProdutos = sortedProdutos.filter(produto => produto.category.toLowerCase() == selectedOptionC.value.toLowerCase());
+  }
+
   const searchTermLower = searchTerm.value.toLowerCase();
   return sortedProdutos.filter(produto => produto.title.toLowerCase().includes(searchTermLower));
 });
+
 
 </script>
 <template>
@@ -44,7 +55,10 @@ const filteredProdutos = computed(() => {
         <form class="row row-cols-lg-auto g-3 align-items-center">
           <div class="col-12">
             <input id="inline-form-input-name" class="form-control mb-2 mb-sm-0 mr-sm-2" placeholder="Nome do Produto"
-              v-model="searchTerm" />
+              v-model="searchTerm" 
+              @click="resetCategorySelector"
+              ref="searchTermInput" 
+              />
           </div>
           <div class="col-12">
             <label class="visually-hidden" for="inlineFormSelectPref">Preference</label>
@@ -52,6 +66,16 @@ const filteredProdutos = computed(() => {
               <option selected>ALL...</option>
               <option value="maior">Maior</option>
               <option value="menor">Menor</option>
+            </select>
+          </div>
+          <div class="col-12">
+            <label class="visually-hidden" for="inlineFormSelectPref">Preference</label>
+            <select class="form-select" id="inlineFormSelectPref" v-model="selectedOptionC">
+              <option selected>Categorias: </option>
+              <option value="men's clothing">men's clothing</option>
+              <option value="jewelery">jewelery</option>
+              <option value="electronics">electronics</option>
+              <option value="women's clothing">women's clothing</option>
             </select>
           </div>
         </form>

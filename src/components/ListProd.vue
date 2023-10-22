@@ -16,6 +16,7 @@ const truncate = (text, length) => {
 </script>
 
 <template>
+    
     <div class="col-12 col-sm-4 col-md-3 col-lg-3">
         <a class="link" :data-bs-target="`#exampleModal-${id}`" data-bs-toggle="modal">
             <div class="card mb-3 hover">
@@ -24,11 +25,13 @@ const truncate = (text, length) => {
                 </div>
                 <h5 class="th4">{{ truncate(title, 30) }}</h5>
                 <div class="card-body text-center">
-                    <div class="tipos">
+                    <div>
                         <div class="d-flex justify-content-center align-items-center">
                             <StarRating v-model="selectedRating" :max="5" :avalicao="avalicao" />
                         </div>
                         <p>Nota: {{ avalicao }}</p>
+                        <h6 class="modal-title fs-5" id="exampleModalLabel">Categoria: </h6>
+                        <p class="fs-6" id="exampleModalLabel">{{ categoria }}</p>
                         <span>
                             R$ {{ preco.toFixed(2) }}
                         </span>
@@ -95,5 +98,4 @@ const truncate = (text, length) => {
     height: 150px;
     overflow: hidden;
     border-bottom: 1px solid rgba(0, 0, 0, 0.164);
-}
-</style>
+}</style>
