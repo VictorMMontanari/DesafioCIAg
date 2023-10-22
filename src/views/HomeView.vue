@@ -1,10 +1,12 @@
 <script setup>
-import { ref, computed, onMounted, watch, reactive } from 'vue';
-import ListProd from '../components/ListProd.vue'
+import { ref, computed, onMounted, reactive } from 'vue';
+import ListProd from '../components/ListProd.vue';
+import CarregarProd from '../components/CarregarProd.vue';
 
 const selectedOption = ref('ALL...');
 const produtos = reactive([]);
 const searchTerm = ref('');
+const produtosLoaded = ref(false); 
 
 onMounted(async () => {
   try {
@@ -12,7 +14,7 @@ onMounted(async () => {
       .then(res => res.json())
       .then(res => {
         produtos.value = res;
-        console.log(res);
+        produtosLoaded.value = true;
       });
   } catch (error) {
     console.error('Erro na solicitação:', error);
@@ -20,15 +22,21 @@ onMounted(async () => {
 });
 
 const filteredProdutos = computed(() => {
+  const sortedProdutos = [...produtos.value];
+
   if (!searchTerm.value) {
-    return produtos.value;
+    if (selectedOption.value.toLowerCase() === "maior") {
+      sortedProdutos.sort((a, b) => b.price - a.price);
+    }
+    else if (selectedOption.value.toLowerCase() === "menor") {
+      sortedProdutos.sort((a, b) => a.price - b.price);
+    }
   }
   const searchTermLower = searchTerm.value.toLowerCase();
-  return produtos.value.filter(produto => produto.title.toLowerCase().includes(searchTermLower));
+  return sortedProdutos.filter(produto => produto.title.toLowerCase().includes(searchTermLower));
 });
 
 </script>
-
 <template>
   <main class="principal">
     <div class="container conteudo">
@@ -52,7 +60,7 @@ const filteredProdutos = computed(() => {
         <div class="col">
           <div class=" text-center conteudo2">
             <div class="card-body row g-3">
-              <ListProd v-for="produto in filteredProdutos"
+              <ListProd v-if="produtosLoaded" v-for="produto in filteredProdutos"
                 :key="produto.id"
                 :id="produto.id"
                 :title="produto.title"
@@ -62,6 +70,7 @@ const filteredProdutos = computed(() => {
                 :img="produto.image"
                 :avalicao="produto.rating.rate"
                 :qtd="produto.rating.count"/>
+              <CarregarProd v-else/>
             </div>
           </div>
         </div>
