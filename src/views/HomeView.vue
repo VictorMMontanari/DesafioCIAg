@@ -7,11 +7,11 @@ const selectedOption = ref('ALL...');
 const selectedOptionC = ref('Categorias:');
 const produtos = reactive([]);
 const searchTerm = ref('');
-const produtosLoaded = ref(false); 
+const produtosLoaded = ref(false);
 
 const resetCategorySelector = () => {
   selectedOptionC.value = 'Categorias:';
-  searchTerm.value = ''; // Limpar o campo de pesquisa
+  searchTerm.value = '';
 }
 
 onMounted(async () => {
@@ -55,10 +55,7 @@ const filteredProdutos = computed(() => {
         <form class="row row-cols-lg-auto g-3 align-items-center">
           <div class="col-12">
             <input id="inline-form-input-name" class="form-control mb-2 mb-sm-0 mr-sm-2" placeholder="Nome do Produto"
-              v-model="searchTerm" 
-              @click="resetCategorySelector"
-              ref="searchTermInput" 
-              />
+              v-model="searchTerm" @click="resetCategorySelector" ref="searchTermInput" />
           </div>
           <div class="col-12">
             <label class="visually-hidden" for="inlineFormSelectPref">Preference</label>
@@ -84,17 +81,11 @@ const filteredProdutos = computed(() => {
         <div class="col">
           <div class=" text-center conteudo2">
             <div class="card-body row g-3">
-              <ListProd v-if="produtosLoaded" v-for="produto in filteredProdutos"
-                :key="produto.id"
-                :id="produto.id"
-                :title="produto.title"
-                :preco="produto.price"
-                :descricao="produto.description"
-                :categoria="produto.category"
-                :img="produto.image"
-                :avalicao="produto.rating.rate"
-                :qtd="produto.rating.count"/>
-              <CarregarProd v-else/>
+              <ListProd v-if="produtosLoaded" v-for="produto in filteredProdutos" :key="produto.id" :id="produto.id"
+                :title="produto.title" :preco="produto.price" :descricao="produto.description"
+                :categoria="produto.category" :img="produto.image" :avalicao="produto.rating.rate"
+                :qtd="produto.rating.count" />
+              <CarregarProd v-else />
             </div>
           </div>
         </div>

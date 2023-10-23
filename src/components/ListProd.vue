@@ -16,7 +16,6 @@ const truncate = (text, length) => {
 </script>
 
 <template>
-    
     <div class="col-12 col-sm-4 col-md-3 col-lg-3">
         <a class="link" :data-bs-target="`#exampleModal-${id}`" data-bs-toggle="modal">
             <div class="card mb-3 hover">
@@ -98,4 +97,5 @@ const truncate = (text, length) => {
     height: 150px;
     overflow: hidden;
     border-bottom: 1px solid rgba(0, 0, 0, 0.164);
-}</style>
+}
+</style>
